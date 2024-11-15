@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Datos</title>
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <h1>Registrar datos en Google Sheets</h1>
+    <div>
+        <button onclick="openForm('Destino 1')">Destino 1</button>
+        <button onclick="openForm('Destino 2')">Destino 2</button>
+        <button onclick="openForm('Destino 3')">Destino 3</button>
+    </div>
+    <div id="form-container" style="display: none;">
+        <form id="entry-form" onsubmit="submitForm(event)">
+            <label for="motivo">Motivo:</label>
+            <input type="text" id="motivo" name="motivo" required>
+            <input type="hidden" id="destino" name="destino">
+            <button type="button" onclick="closeForm()">Cancelar</button>
+            <button type="submit">Aceptar</button>
+        </form>
+    </div>
+</body>
+</html>

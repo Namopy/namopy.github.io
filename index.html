@@ -3,24 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro de Datos</title>
-    <script src="script.js" defer></script>
+    <title>Index</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .btn-custom {
+            background-color: #ff7800; /* Naranja Repsol */
+            color: white;
+            width: 150px; /* Botones más estrechos */
+        }
+        .btn-custom:hover {
+            background-color: #e56600; /* Tono más oscuro */
+        }
+        .content-display {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 1.2rem;
+        }
+    </style>
 </head>
-<body>
-    <h1>Registrar datos en Google Sheets</h1>
-    <div>
-        <button onclick="openForm('Destino 1')">Destino 1</button>
-        <button onclick="openForm('Destino 2')">Destino 2</button>
-        <button onclick="openForm('Destino 3')">Destino 3</button>
+<body class="bg-light">
+    <div class="container text-center mt-5">
+        <img src="your-image.jpg" class="img-fluid mb-4" alt="Image">
+        <div class="d-grid gap-3">
+            <button class="btn btn-custom" onclick="redirectToForm('Barajas Industrial')">Barajas Industrial</button>
+            <button class="btn btn-custom" onclick="redirectToForm('T1 Aire')">T1 Aire</button>
+            <button class="btn btn-custom" onclick="redirectToForm('T4 Aire')">T4 Aire</button>
+            <button class="btn btn-custom" onclick="redirectToForm('T2 Tierra')">T2 Tierra</button>
+            <button class="btn btn-custom" onclick="redirectToForm('T4 Tierra')">T4 Tierra</button>
+        </div>
+        <div id="contentDisplay" class="content-display">
+            <p id="cellM1">Cargando contenido de M1...</p>
+            <p id="cellM2">Cargando contenido de M2...</p>
+        </div>
     </div>
-    <div id="form-container" style="display: none;">
-        <form id="entry-form" onsubmit="submitForm(event)">
-            <label for="motivo">Motivo:</label>
-            <input type="text" id="motivo" name="motivo" required>
-            <input type="hidden" id="destino" name="destino">
-            <button type="button" onclick="closeForm()">Cancelar</button>
-            <button type="submit">Aceptar</button>
-        </form>
-    </div>
+    <script>
+        function redirectToForm(buttonName) {
+            const url = `form.html?buttonName=${encodeURIComponent(buttonName)}`;
+            window.location.href = url;
+        }
+
+        function fetchCellContent() {
+            const apiUrl = "https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec?action=getCells";
+
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('cellM1').textContent = `M1: ${data.m1 || "Sin datos"}`;
+                    document.getElementById('cellM2').textContent = `M2: ${data.m2 || "Sin datos"}`;
+                })
+                .catch(error => {
+                    console.error("Error al cargar contenido de celdas:", error);
+                });
+        }
+
+        window.onload = fetchCellContent;
+    </script>
 </body>
 </html>

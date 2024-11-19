@@ -14,6 +14,9 @@
                 <p>Cargando datos...</p>
             </div>
             <button class="btn btn-primary mt-3" onclick="window.location.href='index.html'">Atrás</button>
+            <div class="mt-3">
+                <button class="btn btn-success" id="updateFormulasButton">Actualizar Datos</button>
+            </div>
         </div>
     </div>
     <script>
@@ -43,7 +46,7 @@
                             <p><strong>Importe:</strong></p>
                             <p class="display-4">${data.m2} €</p>
                         </div>
-                        <p><strong>Acumulado hasta el:</strong> ${formatDate(data.lastDate)}</p>
+                        <p><strong>Acumulado hasta el:</strong> ${data.lastDate !== "Sin datos" ? data.lastDate : "Sin fecha registrada"}</p>
                     `;
                 } else {
                     googleDataDiv.innerHTML = '<p>Error al obtener los datos.</p>';
@@ -53,6 +56,23 @@
                 const googleDataDiv = document.getElementById('googleData');
                 googleDataDiv.innerHTML = `<p>Error al conectar con el servidor: ${error.message}</p>`;
             });
+
+        // Acción para actualizar las fórmulas en la columna F
+        document.getElementById('updateFormulasButton').addEventListener('click', () => {
+            fetch('https://script.google.com/macros/s/AKfycbwlGYWe8tBjvflK5Z6gZIKs3J7NIKWS8OPohEkS_AwKSStEPyrOmMEuUsBge92ce14P/exec?action=updateFormulas')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Fórmulas actualizadas correctamente.');
+                        window.location.reload(); // Recargar la página después de actualizar
+                    } else {
+                        alert('Error al actualizar las fórmulas: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    alert('Error de conexión: ' + error.message);
+                });
+        });
     </script>
 </body>
 </html>

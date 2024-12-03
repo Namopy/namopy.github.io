@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saldo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5 text-center">
+        <h2>Saldo Actual</h2>
+        <p id="balance" class="fs-4">Cargando saldo...</p>
+        <a href="index_saldo.html" class="btn btn-secondary">Atrás</a>
+    </div>
+
+    <script>
+        fetch("https://script.google.com/macros/s/AKfycbxwgttAy6_syro5FOGU7gEu1gCzsIZNJS6REq7Qm1O1goD4I5PI5swtE-ak9KzVrcsN/exec?getBalance=true")
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('balance').textContent = `€${data.balance || "No disponible"}`;
+            })
+            .catch(error => {
+                console.error("Error al obtener el saldo:", error);
+                document.getElementById('balance').textContent = "Error al cargar el saldo";
+            });
+    </script>
+</body>
+</html>

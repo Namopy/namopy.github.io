@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Añadir Gasto</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .form-container {
+            max-width: 300px; /* Ancho máximo del contenedor del formulario */
+            margin: 50px auto; /* Centrado horizontal y espacio vertical */
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #fff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .form-label {
+            text-align: left;
+        }
+        .form-control {
+            width: 200px; /* Ancho de los campos de entrada */
+            margin: 0 auto;
+        }
+        .btn {
+            width: 200px;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2>Añadir Gasto</h2>
+        <form id="expenseForm">
+            <div class="mb-3">
+                <label for="date" class="form-label">Fecha</label>
+                <input type="date" class="form-control" id="date" required>
+            </div>
+            <div class="mb-3">
+                <label for="amount" class="form-label">Importe</label>
+                <input type="number" class="form-control" id="amount" step="0.01" required>
+            </div>
+            <div class="mb-3">
+                <label for="concept" class="form-label">Concepto</label>
+                <input type="text" class="form-control" id="concept" required>
+            </div>
+            <div class="text-center">
+                <button type="submit" class="btn btn-success">Aceptar</button>
+                <a href="index_saldo.html" class="btn btn-secondary mt-2">Atrás</a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Asignar la fecha actual al campo de fecha al cargar la página
+        document.addEventListener('DOMContentLoaded', function () {
+            const today = new Date();
+            const formattedDate = today.toISOString().split('T')[0]; // Formato YYYY-MM-DD
+            document.getElementById('date').value = formattedDate;
+        });
+
+        // Enviar datos del formulario
+        document.getElementById('expenseForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const date = document.getElementById('date').value;
+            const amount = document.getElementById('amount').value;
+            const concept = document.getElementById('concept').value;
+
+            fetch("https://script.google.com/macros/s/AKfycbxwgttAy6_syro5FOGU7gEu1gCzsIZNJS6REq7Qm1O1goD4I5PI5swtE-ak9KzVrcsN/exec?" + 
+                new URLSearchParams({ date, amount, concept }), { method: "GET" })
+            .then(response => response.json())
+            .then(data => {
+                alert("Gasto añadido con éxito");
+                window.location.href = "index_saldo.html";
+            })
+            .catch(error => {
+                alert("Error al enviar los datos");
+                console.error(error);
+            });
+        });
+    </script>
+</body>
+</html>

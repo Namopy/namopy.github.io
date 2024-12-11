@@ -22,7 +22,7 @@
         fetch("https://script.google.com/macros/s/AKfycbxwgttAy6_syro5FOGU7gEu1gCzsIZNJS6REq7Qm1O1goD4I5PI5swtE-ak9KzVrcsN/exec?getBalance=true")
             .then(response => response.json())
             .then(data => {
-                document.getElementById('balance').textContent = `€${data.balance || "No disponible"}`;
+                document.getElementById('balance').textContent = `${data.balance || "No disponible"} €`;
             })
             .catch(error => {
                 console.error("Error al obtener el saldo:", error);

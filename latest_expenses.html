@@ -44,10 +44,10 @@ fetch("https://script.google.com/macros/s/AKfycbxwgttAy6_syro5FOGU7gEu1gCzsIZNJS
                 // Crear la fila con los datos
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-    <td>${formattedDate}</td>
-    <td>€${parseFloat(row[1]).toFixed(2) || 'Sin importe'}</td>
-    <td>${row[2] || 'Sin concepto'}</td>
-`;
+                    <td>${formattedDate}</td>
+                    <td>€${parseFloat(row[1]).toFixed(2) || 'Sin importe'}</td>
+                    <td>${row[2] || 'Sin concepto'}</td>
+                `;
 
                 table.appendChild(tr);
             });

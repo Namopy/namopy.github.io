@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cálculo de días a librar</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { background: #f8f9fa; color: #212529; }
+    .card { background: #ffffff; border: 1px solid #dee2e6; }
+    /* Logo centrado */
+    .logo-top {
+      display: block;
+      margin: 0 auto 1rem auto; /* Centrado + margen inferior */
+      max-width: 300px;         /* Tamaño máximo */
+      height: auto;             /* Mantener proporción */
+    }
+    .big-title { font-size: 1.25rem; font-weight: 700; }
+    .big-formula { font-size: 1.1rem; font-weight: 700; }
+    .big-result { font-size: 2rem; font-weight: 800; }
+    .muted { color: #6c757d; }
+  </style>
+</head>
+<body>
+  <div class="container py-4">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+
+        <!-- Logo superior -->
+        <img class="logo-top" src="logo-repsol.svg" alt="Logo Repsol" />
+
+        <div class="card shadow-sm">
+          <div class="card-body p-4">
+            <h1 class="h4 mb-2">Calculadora de días a librar</h1>
+            <p id="formula" class="big-formula mb-3">Fórmula: <span class="text-danger">X = (D × N) / 365</span></p>
+            <p class="muted mb-4">
+              D = días a librar al año • N = días del intervalo (ambos incluidos)
+            </p>
+
+            <form id="formLiberar" novalidate>
+              <div class="mb-3">
+                <label for="diasAnio" class="form-label">¿Cuántos días debes librar al año? (D) (147 año normal, 148 año bisiesto)</label>
+                <input type="number" inputmode="numeric" class="form-control" id="diasAnio" name="diasAnio"
+                       placeholder="Ej.: 147" min="0" step="0.01" required>
+              </div>
+
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label for="fechaInicio" class="form-label">Fecha de inicio</label>
+                  <input type="date" class="form-control" id="fechaInicio" name="fechaInicio" required>
+                </div>
+                <div class="col-md-6">
+                  <label for="fechaFin" class="form-label">Fecha de fin</label>
+                  <input type="date" class="form-control" id="fechaFin" name="fechaFin" required>
+                </div>
+              </div>
+
+              <div class="d-flex gap-2 mt-4">
+                <button type="submit" class="btn btn-primary">Calcular</button>
+                <button type="button" id="btnReset" class="btn btn-outline-secondary">Borrar formulario</button>
+              </div>
+            </form>
+
+            <hr class="my-4">
+
+            <!-- Resultado grande -->
+            <div id="resultadoGrande" class="big-result d-none text-success"></div>
+
+            <!-- Alertas y detalle -->
+            <div id="resultado" class="alert d-none mt-3" role="alert"></div>
+            <div id="detalle" class="small muted"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function dateToUTC(isoDate) {
+      const [y, m, d] = isoDate.split('-').map(Number);
+      return new Date(Date.UTC(y, m - 1, d));
+    }
+
+    // Días entre fechas, ambos incluidos
+    function diasInclusivos(fechaInicioISO, fechaFinISO) {
+      const start = dateToUTC(fechaInicioISO);
+      const end = dateToUTC(fechaFinISO);
+      const msPorDia = 24 * 60 * 60 * 1000;
+      const diffMs = end - start;
+      if (diffMs < 0) return null;
+      return Math.floor(diffMs / msPorDia) + 1;
+    }
+
+    function mostrarAlerta(tipo, mensaje) {
+      const alert = document.getElementById('resultado');
+      alert.className = 'alert alert-' + tipo;
+      alert.textContent = mensaje;
+      alert.classList.remove('d-none');
+    }
+
+    function mostrarResultadoGrande(texto) {
+      const big = document.getElementById('resultadoGrande');
+      big.textContent = texto;
+      big.classList.remove('d-none');
+    }
+
+    function ocultarMensajes() {
+      document.getElementById('resultado').classList.add('d-none');
+      document.getElementById('resultado').textContent = '';
+      document.getElementById('resultadoGrande').classList.add('d-none');
+      document.getElementById('resultadoGrande').textContent = '';
+      document.getElementById('detalle').textContent = '';
+    }
+
+    document.getElementById('formLiberar').addEventListener('submit', function (e) {
+      e.preventDefault();
+      ocultarMensajes();
+
+      const D = parseFloat(document.getElementById('diasAnio').value);
+      const inicio = document.getElementById('fechaInicio').value;
+      const fin = document.getElementById('fechaFin').value;
+
+      if (isNaN(D) || D < 0) {
+        mostrarAlerta('warning', 'Indica un número válido de días a librar al año (≥ 0).');
+        return;
+      }
+      if (!inicio || !fin) {
+        mostrarAlerta('warning', 'Completa ambas fechas.');
+        return;
+      }
+
+      const N = diasInclusivos(inicio, fin);
+      if (N === null) {
+        mostrarAlerta('warning', 'La fecha de fin debe ser posterior o igual a la de inicio.');
+        return;
+      }
+
+      // X = (D × N) / 365 → redondeo al entero más cercano, sin decimales
+      const xRaw = (D * N) / 365;
+      const X = Math.round(xRaw);
+
+      mostrarResultadoGrande(`Debes librar: ${X} día(s)`);
+
+      // Mostramos detalle con el valor sin redondear
+      const xRawFmt = xRaw.toFixed(2);
+      document.getElementById('detalle').textContent =
+        `Detalle: D = ${D}, N = ${N}. Cálculo: (${D} × ${N}) / 365 = ${xRawFmt} → redondeado = ${X}`;
+    });
+
+    document.getElementById('btnReset').addEventListener('click', function () {
+      document.getElementById('formLiberar').reset();
+      ocultarMensajes();
+    });
+  </script>
+</body>
+</html>

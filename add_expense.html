@@ -60,39 +60,47 @@
     </div>
 
     <script>
-        // Asignar la fecha actual al campo de fecha al cargar la página
-        document.addEventListener('DOMContentLoaded', function () {
-            const today = new Date();
-            const formattedDate = today.toISOString().split('T')[0]; // Formato YYYY-MM-DD
-            document.getElementById('date').value = formattedDate;
-        });
+document.addEventListener('DOMContentLoaded', () => {
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('date').value = today;
 
-        // Enviar datos del formulario
-        document.getElementById('expenseForm').addEventListener('submit', function (event) {
+  document.getElementById('expenseForm').addEventListener('submit', async (event) => {
     event.preventDefault();
 
     const date = document.getElementById('date').value;
-    const amount = parseFloat(document.getElementById('amount').value).toFixed(2);
-    const concept = document.getElementById('concept').value;
-    const bank = document.getElementById('bank').value; // ahora texto libre
+    const amountNumber = parseFloat(document.getElementById('amount').value);
+    if (Number.isNaN(amountNumber)) {
+      alert('Importe inválido');
+      return;
+    }
+    const amount = amountNumber.toFixed(2);
+    const concept = document.getElementById('concept').value.trim();
+    const bank = document.getElementById('bank').value.trim();
 
-    fetch("https://script.google.com/macros/s/AKfycbwEFJ3SAeLCHX5BDX4nkZG0gG-o-99HXaqei8-w9pUSSKROXkb8xRMj4Vn3gbEIQ3bo/exec" + 
-        new URLSearchParams({ date, amount, concept, bank }), { method: "GET" })
-    .then(response => response.json())
-    .then(data => {
-        alert("Gasto añadido con éxito");
-        window.location.href = "index_saldo.html";
-    })
-    .catch(error => {
-        alert("Error al enviar los datos");
-        console.error(error);
-    });
+    const params = new URLSearchParams({ date, amount, concept, bank }).toString();
+    const url = `https://script.google.com/macros/s/AKfycbwEFJ3SAeLCHX5BDX4nkZG0gG-o-99HXaqei8-w9pUSSKROXkb8xRMj4Vn3gbEIQ3bo/exec?${params}`;
+
+    try {
+      const res = await fetch(url, { method: 'GET' });
+      const data = await res.json(); // tu doGet debe devolver JSON
+      if (data && data.ok) {
+        alert('Gasto añadido con éxito');
+        window.location.href = 'index_saldo.html';
+      } else {
+        alert('El script respondió pero sin ok.');
+        console.log('Respuesta:', data);
+      }
+    } catch (err) {
+      alert('Error al enviar los datos');
+      console.error(err);
+    }
+  });
 });
+</script>
 
-
-    </script>
 </body>
 </html>
+
 
 
 

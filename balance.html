@@ -21,7 +21,7 @@
     </div>
 
     <script>
-        fetch("https://script.google.com/macros/s/AKfycbxwgttAy6_syro5FOGU7gEu1gCzsIZNJS6REq7Qm1O1goD4I5PI5swtE-ak9KzVrcsN/exec?getBalance=true")
+        fetch("https://script.google.com/macros/s/AKfycbwEFJ3SAeLCHX5BDX4nkZG0gG-o-99HXaqei8-w9pUSSKROXkb8xRMj4Vn3gbEIQ3bo/exec?getBalance=true")
             .then(response => response.json())
             .then(data => {
                 document.getElementById('balance').textContent = `${data.balance || "No disponible"} €`;
@@ -33,3 +33,4 @@
     </script>
 </body>
 </html>
+

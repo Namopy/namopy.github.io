@@ -59,7 +59,7 @@
         </form>
     </div>
 
-    <script>
+<script>
 document.addEventListener('DOMContentLoaded', () => {
   const today = new Date().toISOString().split('T')[0];
   document.getElementById('date').value = today;
@@ -82,13 +82,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
     try {
       const res = await fetch(url, { method: 'GET' });
-      const data = await res.json(); // tu doGet debe devolver JSON
-      if (data && data.ok) {
+
+      // Intenta leer JSON; si no es JSON, cae a texto
+      let payload = null;
+      let isJSON = false;
+      const ct = res.headers.get('content-type') || '';
+      if (ct.includes('application/json')) {
+        payload = await res.json();
+        isJSON = true;
+      } else {
+        payload = await res.text(); // puede ser string vacío
+      }
+
+      // Éxito si el HTTP es 2xx y, si vino JSON, ok === true
+      const success = res.ok && (!isJSON || (payload && payload.ok === true));
+
+      if (success) {
         alert('Gasto añadido con éxito');
         window.location.href = 'index_saldo.html';
       } else {
-        alert('El script respondió pero sin ok.');
-        console.log('Respuesta:', data);
+        alert('El script respondió pero sin ok. (Se guardó si ves la fila nueva)');
+        console.log('Respuesta:', payload);
       }
     } catch (err) {
       alert('Error al enviar los datos');
@@ -98,8 +112,10 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 
+
 </body>
 </html>
+
 
 
 

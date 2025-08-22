@@ -72,25 +72,28 @@
 
         // Enviar datos del formulario
         document.getElementById('expenseForm').addEventListener('submit', function (event) {
-            event.preventDefault();
+    event.preventDefault();
 
-            const date = document.getElementById('date').value;
-            const amount = parseFloat(document.getElementById('amount').value).toFixed(2);
-            const concept = document.getElementById('concept').value;
+    const date = document.getElementById('date').value;
+    const amount = parseFloat(document.getElementById('amount').value).toFixed(2);
+    const concept = document.getElementById('concept').value;
+    const bank = document.getElementById('bank').value;
 
-            fetch("https://script.google.com/macros/s/AKfycbxwgttAy6_syro5FOGU7gEu1gCzsIZNJS6REq7Qm1O1goD4I5PI5swtE-ak9KzVrcsN/exec?" + 
-                new URLSearchParams({ date, amount, concept }), { method: "GET" })
-            .then(response => response.json())
-            .then(data => {
-                alert("Gasto añadido con éxito");
-                window.location.href = "index_saldo.html";
-            })
-            .catch(error => {
-                alert("Error al enviar los datos");
-                console.error(error);
-            });
-        });
+    fetch("https://script.google.com/macros/s/AKfycbxwgttAy6_syro5FOGU7gEu1gCzsIZNJS6REq7Qm1O1goD4I5PI5swtE-ak9KzVrcsN/exec?" + 
+        new URLSearchParams({ date, amount, concept, bank }), { method: "GET" })
+    .then(response => response.json())
+    .then(data => {
+        alert("Gasto añadido con éxito");
+        window.location.href = "index_saldo.html";
+    })
+    .catch(error => {
+        alert("Error al enviar los datos");
+        console.error(error);
+    });
+});
+
     </script>
 </body>
 </html>
+
 

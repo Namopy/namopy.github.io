@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const today = new Date().toISOString().split('T')[0];
   document.getElementById('date').value = today;
 
-  document.getElementById('expenseForm').addEventListener('submit', async (event) => {
+  document.getElementById('expenseForm').addEventListener('submit', (event) => {
     event.preventDefault();
 
     const date = document.getElementById('date').value;
@@ -80,41 +80,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const params = new URLSearchParams({ date, amount, concept, bank }).toString();
     const url = `https://script.google.com/macros/s/AKfycbwEFJ3SAeLCHX5BDX4nkZG0gG-o-99HXaqei8-w9pUSSKROXkb8xRMj4Vn3gbEIQ3bo/exec?${params}`;
 
-    try {
-      const res = await fetch(url, { method: 'GET' });
+    // Enviar en segundo plano sin esperar
+    fetch(url).catch(err => console.error('Error enviando gasto:', err));
 
-      // Intenta leer JSON; si no es JSON, cae a texto
-      let payload = null;
-      let isJSON = false;
-      const ct = res.headers.get('content-type') || '';
-      if (ct.includes('application/json')) {
-        payload = await res.json();
-        isJSON = true;
-      } else {
-        payload = await res.text(); // puede ser string vacío
-      }
-
-      // Éxito si el HTTP es 2xx y, si vino JSON, ok === true
-      const success = res.ok && (!isJSON || (payload && payload.ok === true));
-
-      if (success) {
-        alert('Gasto añadido con éxito');
-        window.location.href = 'index_saldo.html';
-      } else {
-        alert('Gasto añadido con éxito');
-        console.log('Respuesta:', payload);
-      }
-    } catch (err) {
-      alert('Error al enviar los datos');
-      console.error(err);
-    }
+    // Mostrar mensaje y redirigir inmediatamente
+    alert('Gasto añadido con éxito');
+    window.location.href = 'index_saldo.html';
   });
 });
 </script>
 
 
+
 </body>
 </html>
+
 
 
 

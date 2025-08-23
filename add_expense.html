@@ -64,12 +64,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const today = new Date().toISOString().split('T')[0];
   document.getElementById('date').value = today;
 
-  document.getElementById('expenseForm').addEventListener('submit', (event) => {
+  document.getElementById('expenseForm').addEventListener('submit', async (event) => {
     event.preventDefault();
 
     const date = document.getElementById('date').value;
-    const amountNumber = parseFloat(document.getElementById('amount').value);
-    if (Number.isNaN(amountNumber)) {
+    const amountRaw = document.getElementById('amount').value.trim();
+    // Acepta coma o punto y fuerza dos decimales
+    const amountNumber = Number(amountRaw.replace(',', '.'));
+    if (!Number.isFinite(amountNumber)) {
       alert('Importe inválido');
       return;
     }
@@ -80,20 +82,29 @@ document.addEventListener('DOMContentLoaded', () => {
     const params = new URLSearchParams({ date, amount, concept, bank }).toString();
     const url = `https://script.google.com/macros/s/AKfycbwEFJ3SAeLCHX5BDX4nkZG0gG-o-99HXaqei8-w9pUSSKROXkb8xRMj4Vn3gbEIQ3bo/exec?${params}`;
 
-    // Enviar en segundo plano sin esperar
-    fetch(url).catch(err => console.error('Error enviando gasto:', err));
-
-    // Mostrar mensaje y redirigir inmediatamente
-    alert('Gasto añadido con éxito');
-    window.location.href = 'index_saldo.html';
+    try {
+      const res = await fetch(url, { method: 'GET', cache: 'no-store' });
+      const text = await res.text();
+      if (res.ok && text.trim() === 'OK') {
+        alert('Gasto añadido con éxito');
+        window.location.href = 'index_saldo.html';
+      } else {
+        alert('El script respondió pero sin OK: ' + text);
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Error enviando gasto: ' + err);
+    }
   });
 });
 </script>
 
 
 
+
 </body>
 </html>
+
 
 
 
